@@ -1,15 +1,22 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
 
 export default function ProductCard({ product }) {
+  const navigate = useNavigate()
   const { addToCart } = useCart()
   const toast = useToast()
 
   const img = product.thumbnail || (product.images && product.images[0]) || ''
 
+  const handleCardClick = (event) => {
+    if (event.target.closest('button')) return
+    navigate(`/products/${product.id}`)
+  }
+
   return (
-    <div className="card">
+    <div className="card" onClick={handleCardClick}>
       <div className="card-media">
         <img src={img} alt={product.title} />
         <span className={`stock ${product.stock > 0 ? 'in' : 'out'}`}>

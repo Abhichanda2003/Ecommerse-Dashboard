@@ -49,8 +49,51 @@ export default function Products() {
     return list
   }, [products, category, debouncedSearch, sort])
 
+  const totalProducts = products.length
+  const filteredCount = filtered.length
+  const totalCategories = categories.length - 1
+  const inStockCount = products.reduce((sum, item) => sum + (item.stock > 0 ? 1 : 0), 0)
+  const outOfStockCount = totalProducts - inStockCount
+
+  const clearFilters = () => {
+    setSearch('')
+    setCategory('All Categories')
+    setSort('')
+  }
+
   return (
     <main className="container page">
+      <div className="analytics-grid">
+        <div className="analytics-card">
+          <div className="analytics-icon">📦</div>
+          <div>
+            <p className="analytics-label">Total Products</p>
+            <p className="analytics-value">{totalProducts}</p>
+          </div>
+        </div>
+        <div className="analytics-card">
+          <div className="analytics-icon">📂</div>
+          <div>
+            <p className="analytics-label">Categories</p>
+            <p className="analytics-value">{totalCategories}</p>
+          </div>
+        </div>
+        <div className="analytics-card">
+          <div className="analytics-icon">✅</div>
+          <div>
+            <p className="analytics-label">In Stock</p>
+            <p className="analytics-value">{inStockCount}</p>
+          </div>
+        </div>
+        <div className="analytics-card">
+          <div className="analytics-icon">❌</div>
+          <div>
+            <p className="analytics-label">Out of Stock</p>
+            <p className="analytics-value">{outOfStockCount}</p>
+          </div>
+        </div>
+      </div>
+
       <div className="controls">
         <SearchBar value={search} onChange={setSearch} />
 
@@ -69,7 +112,15 @@ export default function Products() {
             <option value="price-desc">Price: High to Low</option>
             <option value="rating-desc">Rating: High to Low</option>
           </select>
+
+          <button type="button" className="clear-filters-btn" onClick={clearFilters}>
+            Clear Filters
+          </button>
         </div>
+      </div>
+
+      <div className="product-count">
+        Showing {filteredCount} of {totalProducts} Products
       </div>
 
       {loading && (
@@ -80,24 +131,12 @@ export default function Products() {
 
       {!loading && !error && (
         filtered.length === 0 ? (
-          <div
-            className="empty-state"
-            style={{
-              marginTop: 24,
-              padding: 20,
-              borderRadius: 12,
-              background: 'var(--code-bg)',
-              border: '1px solid var(--border)',
-              textAlign: 'center',
-            }}
-          >
+          <div className="empty-state">
             <h3>No Products Found</h3>
-            <p style={{ marginTop: 8, marginBottom: 8 }}>Try:</p>
-            <ul style={{ listStyle: 'disc', paddingLeft: 20, display: 'inline-block', textAlign: 'left' }}>
-              <li>Changing the search term</li>
-              <li>Selecting a different category</li>
-              <li>Clearing filters</li>
-            </ul>
+            <p>Try changing search or clearing filters</p>
+            <button type="button" className="clear-filters-btn" onClick={clearFilters}>
+              Clear Filters
+            </button>
           </div>
         ) : (
           <section className="grid">
